@@ -1,25 +1,37 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import TaskForm from './components/TaskForm';
+import TaskList from './components/TaskList';
+import SearchBar from './components/SearchBar';
+import tasksData from './tasks.json';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [tasks, setTasks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    setTasks(tasksData);
+  }, []);
+
+  const addTask = (task) => {
+    setTasks([...tasks, task]);
+  };
+
+  const updateTask = (updatedTask) => {
+    setTasks(tasks.map(task => task.id === updatedTask.id ? updatedTask : task));
+  };
+
+  const filteredTasks = tasks.filter(task => 
+    task.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <SearchBar setSearchTerm={setSearchTerm} />
+      <TaskForm addTask={addTask} />
+      <TaskList tasks={filteredTasks} updateTask={updateTask} />
     </div>
   );
-}
+};
 
 export default App;
